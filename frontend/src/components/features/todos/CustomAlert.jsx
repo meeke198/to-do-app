@@ -7,8 +7,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import   {deleteTodo
-} from "../../../redux/todoSlice";
+import   {deleteTodo} from "../../../redux/todoSlice";
 const CustomAlert = ({id}) => {
    const dispatch = useDispatch();
    const navigate = useNavigate();

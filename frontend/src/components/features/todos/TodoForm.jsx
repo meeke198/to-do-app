@@ -5,23 +5,24 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import "./todo.css";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { createTodo, fetchTodo, editTodo, toggleEdit } from "../../../redux/todoSlice";
 
 const TodoForm = () => {
   const { id } = useParams();
   const isEdit = useSelector((state) => state.todos.isEdit);
   const [name, setName] = useState("");
-  // const [todo, setTodo] = useState("");
+  const [todo, setTodo] = useState("");
   const dispatch = useDispatch();
+  // const navigate = useNavigate();
   console.log({ isEdit });
   useEffect(() => {
     if (isEdit) {
       const fetchData = async () => {
-        const todo = await dispatch(fetchTodo(id));
-        console.log({todo});
-        // setTodo(todo);
-        setName(todo.payload.name);
+        const data = await dispatch(fetchTodo(id));
+        setTodo(data.payload)
+        console.log({data});
+        setName(data.payload.name);
       };
       fetchData();
     }
@@ -30,7 +31,9 @@ const TodoForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isEdit) {
-      const updatedPost = { id, name };
+      let status = todo.status;
+      const updatedPost = { id, name, status };
+      console.log({updatedPost});
       dispatch(editTodo(updatedPost));
     } else {
       const newTodo = {
@@ -41,12 +44,12 @@ const TodoForm = () => {
       setName("");
     }
 
-    // dispatch(toggleEdit(false));
-    //  }
+    dispatch(toggleEdit(false));
+    // navigate('/todos');
   };
 
   return (
-    <div className="form-container">
+   <div className="form-container">
       <Typography className="typography" component="h1" variant="h5">
         {isEdit ? "Edit Post" : "Create new post"}
       </Typography>

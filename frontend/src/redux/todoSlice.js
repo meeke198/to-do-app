@@ -9,8 +9,9 @@ const url = proxyUrl + apiUrl;
 
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
   const response = await axios.get(url)
-  console.log({response});
-  return response.data.data;
+  const data = response.data.data;
+  const newTodos = data.filter(todo => todo.status === false)
+  return newTodos;
 });
 export const fetchCompletedTodos = createAsyncThunk(
   "todos/fetchCompletedTodos",
@@ -36,6 +37,7 @@ export const createTodo = createAsyncThunk("todos/createTodo", async (newTodo) =
 
 export const editTodo = createAsyncThunk("todos/editTodo", async (updatedTodo) => {
   const id = updatedTodo._id;
+  console.log({id});
   const response = await axios.put(`${url}/${id}`, updatedTodo);
   console.log({response});
   return response.data;
@@ -98,7 +100,8 @@ const todosSlice = createSlice({
      const updatedTodo = action.payload;
      console.log({updatedTodo});
      console.log(state.todos);
-      const newTodos = state.todos.map((todo) => {
+     let newTodos = state.todos;
+      newTodos.map((todo) => {
         if (todo._id === updatedTodo._id) {
           todo = updatedTodo;
         }
@@ -110,14 +113,9 @@ const todosSlice = createSlice({
       // console.log(action.payload);
       state.error = action.error.message;
     });
-    // builder.addCase(updateUser.rejected, (state, action) => {
-    //   if (action.payload) {
-    //     // Since we passed in `MyKnownError` to `rejectValue` in `updateUser`, the type information will be available here.
-    //     state.error = action.payload.errorMessage;
-    //   } else {
-    //     state.error = action.error;
-    //   }
-    // });
+    builder.addCase(deleteTodo.fulfilled, (state, action) => {
+      console.log(action.payload);
+    });
   },
 });
 

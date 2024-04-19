@@ -3,9 +3,8 @@ import {
   editTodo,
   fetchTodo,
   toggleEdit,
-  deleteTodo,
 } from "../../../redux/todoSlice";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import "./todo.css";
 import { useEffect, useState } from "react";
