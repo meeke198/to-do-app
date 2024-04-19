@@ -35,7 +35,9 @@ export const createTodo = createAsyncThunk("todos/createTodo", async (newTodo) =
 });
 
 export const editTodo = createAsyncThunk("todos/editTodo", async (updatedTodo) => {
-  const response = await axios.put(`${url}/${updatedTodo.id}`, updatedTodo);
+  const id = updatedTodo._id;
+  const response = await axios.put(`${url}/${id}`, updatedTodo);
+  console.log({response});
   return response.data;
 });
 
@@ -50,18 +52,12 @@ const todosSlice = createSlice({
     todos: [],
     todo: {},
     completedTodos: [],
+    isEdit: false,
     error: null,
   },
   reducers: {
-    todoToggled(state, action) {
-      const todosArray = state.todos.slice(); // Accessing the underlying array
-      console.log(todosArray);
-      const todo = todosArray.find((todo) => todo._id === action.payload);
-      if (todo) {
-        todo.status = !todo.status;
-        console.log({todo});
-      }
-      state.todos = todosArray; 
+    toggleEdit(state, action) {
+      state.isEdit = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -86,7 +82,7 @@ const todosSlice = createSlice({
        state.completedTodos = action.payload;
      });
      builder.addCase(fetchCompletedTodos.rejected, (state, action) => {
-      //  console.log(action.payload);
+       console.log(action.payload);
        state.error = action.error.message;
      });
     builder.addCase(createTodo.fulfilled, (state, action) => {
@@ -94,6 +90,23 @@ const todosSlice = createSlice({
       state.todos.push(action.payload);
     });
     builder.addCase(createTodo.rejected, (state, action) => {
+      // console.log(action.payload);
+      state.error = action.error.message;
+    });
+    builder.addCase(editTodo.fulfilled, (state, action) => {
+      // console.log(action.payload)
+     const updatedTodo = action.payload;
+     console.log({updatedTodo});
+     console.log(state.todos);
+      const newTodos = state.todos.map((todo) => {
+        if (todo._id === updatedTodo._id) {
+          todo = updatedTodo;
+        }
+      });
+      state.todos = newTodos;
+      console.log(state.todos);
+    });
+    builder.addCase(editTodo.rejected, (state, action) => {
       // console.log(action.payload);
       state.error = action.error.message;
     });
@@ -108,5 +121,5 @@ const todosSlice = createSlice({
   },
 });
 
-export const { todoToggled } = todosSlice.actions;
+export const { toggleEdit } = todosSlice.actions;
 export default todosSlice.reducer;

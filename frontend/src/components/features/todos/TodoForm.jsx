@@ -6,97 +6,77 @@ import Typography from "@mui/material/Typography";
 import "./todo.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { createTodo } from "../../../redux/todoSlice";
+import { createTodo, fetchTodo, editTodo, toggleEdit } from "../../../redux/todoSlice";
 
 const TodoForm = () => {
-  //  const { id } = useParams();
-  //  const editStatus = useSelector((state) => state.posts.editStatus);
-  //  const [message, setMessage] = useState(null);
+  const { id } = useParams();
+  const isEdit = useSelector((state) => state.todos.isEdit);
   const [name, setName] = useState("");
-  //  const [status, setStatus] = useState(false);
+  // const [todo, setTodo] = useState("");
   const dispatch = useDispatch();
-
+  console.log({ isEdit });
   useEffect(() => {
-    //  if (editStatus && id) {
-    //    dispatch(fetchTodo(id)).then((action) => {
-    //      setTitle(action.payload.title);
-    //      setBody(action.payload.body);
-    //    });
-    //  }
-  }, [dispatch]);
+    if (isEdit) {
+      const fetchData = async () => {
+        const todo = await dispatch(fetchTodo(id));
+        console.log({todo});
+        // setTodo(todo);
+        setName(todo.payload.name);
+      };
+      fetchData();
+    }
+  }, [id, isEdit]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    //  if (editStatus) {
-    //    const updatedPost = { id, title, body };
-    //    const response = await dispatch(editPost(updatedPost));
-    //    setMessage(response.payload.message);
-    //  } else {
-    const newTodo = {
-      name,
-      status: false,
-    };
-    dispatch(createTodo(newTodo));
-    setName("");
-    //  setStatus("");
+    if (isEdit) {
+      const updatedPost = { id, name };
+      dispatch(editTodo(updatedPost));
+    } else {
+      const newTodo = {
+        name,
+        status: false,
+      };
+      dispatch(createTodo(newTodo));
+      setName("");
+    }
+
+    // dispatch(toggleEdit(false));
     //  }
   };
 
   return (
     <div className="form-container">
-      {/* {message ? (
-        <>
-          <Typography
-            sx={{ color: "green", height: "5rem" }}
-            component="h1"
-            variant="h5"
-          >
-            {message}
-          </Typography>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            <Link style={{color: "black"}} to="/">Back to home</Link>
-          </Button>
-        </>
-      ) : ( */}
-      <>
-        <Typography className="typography" component="h1" variant="h5">
-          {/* {editStatus ? "Edit Post" : "Create new post"} */} Create todo
-        </Typography>
-        <Box
-          className="form-container"
-          component="form"
-          onSubmit={handleSubmit}
-          noValidate
-          sx={{ mt: 1 }}
+      <Typography className="typography" component="h1" variant="h5">
+        {isEdit ? "Edit Post" : "Create new post"}
+      </Typography>
+      <Box
+        className="form-container"
+        component="form"
+        onSubmit={handleSubmit}
+        noValidate
+        sx={{ mt: 1 }}
+      >
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          id="title"
+          name="title"
+          placeholder="Enter todo here"
+          autoFocus
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
         >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            id="title"
-            name="title"
-            placeholder="Enter todo here"
-            autoFocus
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            {/* {editStatus ? "Edit post" : "Create post"} */}
-            Create new todo
-          </Button>
-        </Box>
-      </>
-      {/* )} */}
+          {isEdit ? "Edit post" : "Create post"}
+        </Button>
+      </Box>
     </div>
   );
 };

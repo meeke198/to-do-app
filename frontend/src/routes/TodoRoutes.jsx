@@ -8,7 +8,7 @@ export function TodoRoutes() {
     <Routes>
       <Route path="/" element={<TodoIndex />} />
       <Route path=":id" element={<TodoShow />} />
-      <Route path="form" element={<TodoForm />} />
+      <Route path="/form" element={<TodoForm />} />
       <Route path="form/:id" element={<TodoForm />} />
     </Routes>
   );

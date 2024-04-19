@@ -1,41 +1,85 @@
 import { useDispatch, useSelector } from "react-redux";
-import { editTodo, fetchTodo } from "../../../redux/todoSlice";
-import { Link, useParams } from "react-router-dom";
+import {
+  editTodo,
+  fetchTodo,
+  toggleEdit,
+  deleteTodo,
+} from "../../../redux/todoSlice";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import "./todo.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import CustomAlert from "./CustomAlert";
 
 const TodoShow = () => {
   const dispatch = useDispatch();
-  const {id} = useParams();
-  const todo = useSelector(state => state.todos.todo);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const todo = useSelector((state) => state.todos.todo);
   console.log({ todo });
+  const [isAlert, setAlert] = useState(false);
   useEffect(() => {
     const fetchData = () => {
-     dispatch(fetchTodo(id));
+      dispatch(fetchTodo(id));
     };
     fetchData();
   }, [dispatch]);
 
   const handleComplete = (todo) => {
     const updatedTodo = { ...todo, status: true };
+    console.log({ updatedTodo });
     dispatch(editTodo(updatedTodo));
   };
+   const handleEdit = () => {
+     dispatch(toggleEdit(true));
+    navigate(`/todos/form/${id}`)
+   };
+  //  const handleDelete = (id) => {
+  //   alert("Are you sure you want to delete")
+  //    dispatch(deleteTodo(id));
+  //   navigate(`/todos`)
+  //  };
 
   return (
-    <article className="todo-article" key={todo?.id}>
-        <h3>{todo?.name}</h3>
-        <Button variant="outlined" color="error" sx={{ marginRight: "1rem" }}>
-        Edit todo
-      </Button>
-        <Button
-          onClick={() => handleComplete(todo)}
-          variant="outlined"
-          color="error"
-        >
-          Complete
-        </Button>
-    </article>
+    <>
+      {isAlert ? (
+        <CustomAlert id={id}/>
+      ) : (
+        <>
+          {" "}
+          <article className="todo-article" key={todo?.id}>
+            {todo ? (
+              <>
+                <h3>{todo?.name}</h3>
+                <Button
+                  onClick={handleEdit}
+                  sx={{ marginRight: "1rem" }}
+                  variant="outlined"
+                  color="error"
+                >
+                  Edit todo
+                </Button>
+                <Button
+                  onClick={() => handleComplete(todo)}
+                  variant="outlined"
+                  color="error"
+                >
+                  Complete
+                </Button>
+                <Button
+                  sx={{ marginLeft: "1rem" }}
+                  onClick={() => setAlert(true)}
+                  variant="outlined"
+                  color="error"
+                >
+                  Delete
+                </Button>
+              </>
+            ) : null}
+          </article>
+        </>
+      )}
+    </>
   );
 };
 
