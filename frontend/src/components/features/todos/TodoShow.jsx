@@ -18,14 +18,11 @@ const TodoShow = () => {
   console.log({ todo });
   const [isAlert, setAlert] = useState(false);
   useEffect(() => {
-    const fetchData = () => {
       dispatch(fetchTodo(id));
-    };
-    fetchData();
   }, [dispatch]);
 
   const handleComplete = (todo) => {
-    const updatedTodo = { ...todo, status: true };
+    const updatedTodo = { ...todo, id: todo._id, status: true };
     console.log({ updatedTodo });
     dispatch(editTodo(updatedTodo));
   };
@@ -33,11 +30,7 @@ const TodoShow = () => {
      dispatch(toggleEdit(true));
     navigate(`/todos/form/${id}`)
    };
-  //  const handleDelete = (id) => {
-  //   alert("Are you sure you want to delete")
-  //    dispatch(deleteTodo(id));
-  //   navigate(`/todos`)
-  //  };
+
 
   return (
     <>

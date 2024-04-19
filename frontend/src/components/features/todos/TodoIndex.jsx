@@ -9,22 +9,21 @@ const TodoIndex = () => {
   const completedTodos = useSelector((state) => state.todos.completedTodos);
   const [isShowComplete, setIsShowComplete] = useState(false);
   console.log({ isShowComplete });
-console.log({todos});
-console.log({ completedTodos });
-  useEffect( () => {
-    const fetchData = async () => {
-      dispatch(fetchTodos());
-      dispatch(fetchCompletedTodos());
-    }
-    fetchData()
+  console.log({ todos });
+  console.log({ completedTodos });
+  useEffect(() => {
+    dispatch(fetchTodos());
+    dispatch(fetchCompletedTodos());
   }, [dispatch]);
-  // onClick={() => setIsShowComplete((prev) => !prev)}
   return (
     <>
       <h3 style={{ marginTop: "4rem" }}>
         {isShowComplete ? "Completed todo(s) list" : "Todo List"}
       </h3>
-      <label style={{ marginBottom: "2rem", display: "inline-block" }} className="switch">
+      <label
+        style={{ marginBottom: "2rem", display: "inline-block" }}
+        className="switch"
+      >
         <input
           onClick={() => setIsShowComplete((prev) => !prev)}
           type="checkbox"

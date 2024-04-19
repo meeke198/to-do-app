@@ -36,7 +36,7 @@ export const createTodo = createAsyncThunk("todos/createTodo", async (newTodo) =
 });
 
 export const editTodo = createAsyncThunk("todos/editTodo", async (updatedTodo) => {
-  const id = updatedTodo._id;
+  const id = updatedTodo.id;
   console.log({id});
   const response = await axios.put(`${url}/${id}`, updatedTodo);
   console.log({response});
