@@ -15,9 +15,6 @@ const TodoIndexItem = ({todo}) => {
         to={`/todos/${todo?._id}`}
       >
         <h3 className="todo-article">{todo?.name}</h3>
-        {/* <Button variant="outlined" color="error" sx={{ marginRight: "1rem" }}>
-        {String(todo?.status)}
-      </Button> */}
         <Button
           variant="outlined"
           color="error"

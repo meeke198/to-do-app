@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
-// import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
@@ -18,9 +17,15 @@ const CustomAlert = ({id}) => {
   };
 
   const handleYes = () => {
-    dispatch(deleteTodo(id));
-    navigate("/todos");
-    handleClose();
+     dispatch(deleteTodo(id))
+       .then(() => {
+         handleClose();
+         navigate("/todos");
+       })
+       .catch((error) => {
+         console.error("Error deleting todo:", error);
+         handleClose();
+       });
   };
 
   const handleNo = () => {
@@ -30,7 +35,6 @@ const CustomAlert = ({id}) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      {/* <DialogTitle>{message}</DialogTitle> */}
       <DialogContent>
         Are you sure you want to delete this todo
       </DialogContent>

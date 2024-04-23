@@ -53,6 +53,7 @@ const todosSlice = createSlice({
   initialState: {
     todos: [],
     todo: {},
+    loading: false,
     completedTodos: [],
     isEdit: false,
     error: null,
@@ -71,6 +72,10 @@ const todosSlice = createSlice({
       //  console.log(action.payload);
        state.error = action.error.message;
      });
+      // builder.addCase(fetchTodo.pending, (state) => {
+      //   //  console.log(action.payload);
+      //   state.loading = true;
+      // });
      builder.addCase(fetchTodo.fulfilled, (state, action) => {
       //  console.log(action.payload);
        state.todo = action.payload;
@@ -96,25 +101,36 @@ const todosSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(editTodo.fulfilled, (state, action) => {
-      // console.log(action.payload)
-     const updatedTodo = action.payload;
-     console.log({updatedTodo});
-     console.log(state.todos);
-     let newTodos = state.todos;
-      newTodos.map((todo) => {
-        if (todo._id === updatedTodo._id) {
-          todo = updatedTodo;
-        }
-      });
-      state.todos = newTodos;
-      console.log(state.todos);
+    //  const updatedTodo = action.payload;
+    //  console.log({updatedTodo});
+    //  console.log(state.todos);
+    //  let newTodos = state.todos;
+    //   newTodos.map((todo) => {
+    //     if (todo._id === updatedTodo._id) {
+    //       todo = updatedTodo;
+    //     }
+    //   });
+    //   state.todos = newTodos;
+    //   console.log(state.todos);
+    // });
+    const updatedTodo = action.payload;
+    state.todos = state.todos.map((todo) =>
+      todo._id === updatedTodo.id ? updatedTodo : todo
+    );
+    state.completedTodos = state.completedTodos.map((todo) =>
+      todo._id === updatedTodo.id ? updatedTodo : todo
+     );
     });
     builder.addCase(editTodo.rejected, (state, action) => {
       // console.log(action.payload);
       state.error = action.error.message;
     });
     builder.addCase(deleteTodo.fulfilled, (state, action) => {
-      console.log(action.payload);
+      const deletedTodoId = action.payload;
+      state.todos = state.todos.filter((todo) => todo._id !== deletedTodoId);
+      state.completedTodos = state.completedTodos.filter(
+        (todo) => todo._id !== deletedTodoId
+      );
     });
   },
 });
