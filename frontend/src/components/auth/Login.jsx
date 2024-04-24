@@ -30,6 +30,7 @@ const Login = () => {
           type="email"
           id="user-email"
           name="email"
+          value={input.email}
           placeholder="example@yahoo.com"
           aria-describedby="user-email"
           aria-invalid="false"
@@ -45,6 +46,7 @@ const Login = () => {
           type="password"
           id="password"
           name="password"
+          value={input.password}
           aria-describedby="user-password"
           aria-invalid="false"
           onChange={handleInput}
