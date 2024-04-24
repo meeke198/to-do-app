@@ -4,7 +4,6 @@ const Joi = require("joi");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  userName: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true, minlength: 8 },
 });
@@ -13,7 +12,6 @@ const User = mongoose.model("User", userSchema, "User");
 
 function validateRegistration(user) {
   const signUpSchema = Joi.object({
-    userName: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
   });
@@ -33,10 +31,7 @@ function validateLogin(user) {
   });
 
   const { error } = schema.validate(user, { abortEarly: false });
-  if (error) {
-    return handleError(error);
-  }
-  return null;
+  return {error};
 }
 
 function handleError(error) {

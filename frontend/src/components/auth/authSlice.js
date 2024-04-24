@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axios from "axios";
-const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
-const apiUrl = "https://be-todo-h20h.onrender.com/api/tasks";
-const url = proxyUrl + apiUrl;
+// const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
+// const apiUrl = "https://be-todo-h20h.onrender.com/api/tasks";
+const url = "http://localhost:5001";
 const initialState = {
   user: null,
   token: null,
@@ -16,7 +16,7 @@ const initialState = {
 //       method: "POST",
 //       headers: {
 //         "Content-Type": "application/json",
-//       },
+//       },`
 //       body: JSON.stringify(data),
 //     });
 //     const res = await response.json();
@@ -33,21 +33,21 @@ const initialState = {
 // };
 export const login = createAsyncThunk("auth/login", async (user) => {
   try {
-    const response = await axios.post(url, user, {
+    const response = await axios.post(`${url}/login`, user, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
       },
+      
     });
-    if (!response.ok) {
-      throw new Error("Login fail");
-    }
+    console.log({response});
     const res = await response.data;
+    console.log({ res });
     const token = res.token;
     localStorage.setItem("token", token.slice(7));
     return res;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 });
 

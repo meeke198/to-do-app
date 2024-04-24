@@ -44,7 +44,15 @@ passport.use(
     }
   )
 );
-
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json(users);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
 //NOT USING PASSPORT
 app.post("/signup", async (req, res) => {
   try {
@@ -55,11 +63,12 @@ app.post("/signup", async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       // const error = new Error()
-      return res.status(400).json({error: {message: "User already exists"}});
+      return res
+        .status(400)
+        .json({ error: { message: "User already exists" } });
     }
 
     const newUser = new User({
-      userName: req.body.userName,
       email: req.body.email,
       password: req.body.password,
     });
@@ -72,11 +81,11 @@ app.post("/signup", async (req, res) => {
 
     const payload = {
       id: savedUser._id,
-      userName: savedUser.userName,
       email: savedUser.email,
     };
 
     jwt.sign(payload, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+      console.log({ token });
       res.json({
         success: true,
         token: "Bearer " + token,
@@ -84,7 +93,7 @@ app.post("/signup", async (req, res) => {
       console.log("User create successfully");
     });
   } catch (err) {
-    console.log({err});
+    console.log({ err });
     const error = new Error();
     error.message = err.message;
     res.status(500).json({ error });
@@ -95,48 +104,47 @@ app.post("/login", async (req, res) => {
   console.log("In login route backend");
   console.log(req.body);
   try {
-    const { isValid } = validateLogin(req.body);
-    console.log({isValid});
-    if (!isValid) {
+    const { error } = validateLogin(req.body);
+    if (error) {
       return res.status(400).json({
         message: "Failed to login, please check your email/password",
       });
-    }
-
-    const email = req.body.email;
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      console.log({ error });
-      return res.status(400).json({
-        message: "Account doesn't exist, please register",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
-
-    if (isMatch) {
-      const payload = {
-        id: user._id,
-        userName: user.userName,
-        email: user.email,
-        password: user.password,
-      };
-
-      const token = jwt.sign(payload, keys.secretOrKey, {
-        expiresIn: 3600,
-      });
-
-      res.json({
-        success: true,
-        token: "Bearer " + token,
-      });
-
-      console.log({ token });
     } else {
-      return res.status(400).json({
-        message: "Failed to login user, please check your email/password",
-      });
+      const email = req.body.email;
+      const user = await User.findOne({ email });
+      console.log({ user });
+      if (!user) {
+        console.log({ error });
+        return res.status(400).json({
+          message: "Account doesn't exist, please register",
+        });
+      }
+
+      const isMatch = await bcrypt.compare(req.body.password, user.password);
+
+      if (isMatch) {
+        const payload = {
+          id: user._id,
+          email: user.email,
+          password: user.password,
+        };
+
+        const token = jwt.sign(payload, keys.secretOrKey, {
+          expiresIn: 3600,
+        });
+
+        res.json({
+          success: true,
+          token: "Bearer " + token,
+          user: payload,
+        });
+
+        console.log({ token });
+      } else {
+        return res.status(400).json({
+          message: "Failed to login user, please check your email/password",
+        });
+      }
     }
   } catch (err) {
     console.log(err);

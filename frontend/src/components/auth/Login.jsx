@@ -1,17 +1,21 @@
 import { useState } from "react";
-
+import { useAuth } from "./AuthProvider";
+import "./auth.css"
 const Login = () => {
   const [input, setInput] = useState({
-    username: "",
+    email: "",
     password: "",
   });
-
-  const handleSubmitEvent = (e) => {
+const {
+    logIn,
+  } = useAuth();
+  const handleSubmitEvent = async (e) => {
     e.preventDefault();
-    if (input.username !== "" && input.password !== "") {
-      //dispatch action from hooks
+    if (input.email !== "" && input.password !== "") {
+      const res = await logIn(input);
+      console.log({res});
     }
-    alert("please provide a valid input");
+    
   };
 
   const handleInput = (e) => {
@@ -37,7 +41,7 @@ const Login = () => {
           onChange={handleInput}
         />
         <div id="user-email" className="sr-only">
-          Please enter a valid username. It must contain at least 6 characters.
+          Please enter a valid email. It must contain at least 6 characters.
         </div>
       </div>
       <div className="form_control">

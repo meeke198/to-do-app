@@ -1,23 +1,38 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {TodoRoutes} from "./routes/TodoRoutes";
 import Home from "./components/features/pages/Home";
 import NavBar from "./components/features/navbar/NavBar";
 import Login from "./components/auth/Login";
-import AuthProvider from "./hooks/AuthProvider";
+import AuthProvider from "./components/auth/AuthProvider";
+import PrivateRoute from "./components/auth/PrivateRoutes";
+import Dashboard from "./components/auth/Dashboard";
 function App() {
   return (
     <>
-      <NavBar />
-      <Routes>
-        <AuthProvider>
+      <AuthProvider>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-        </AuthProvider>
-        <Route path="/" element={<Home />} />
-        <Route path="/todos/*" element={<TodoRoutes />} />
-      </Routes>
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route path="/todos/*" element={<TodoRoutes />} />
+        </Routes>
+      </AuthProvider>
     </>
   );
 }
 
 export default App;
+        {
+          /* <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route element={<AuthProvider />}>
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+        </Route> */
+        }
