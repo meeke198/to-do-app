@@ -5,9 +5,10 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import PropTypes from 'prop-types';
 
 import   {deleteTodo} from "../../../redux/todoSlice";
-const CustomAlert = ({id}) => {
+const CustomAlert = ({ id }) => {
    const dispatch = useDispatch();
    const navigate = useNavigate();
   const [open, setOpen] = useState(true);
@@ -49,4 +50,9 @@ const CustomAlert = ({id}) => {
     </Dialog>
   );
 };
+
+CustomAlert.propTypes = {
+  id: PropTypes.string.isRequired
+}
+
 export default CustomAlert;

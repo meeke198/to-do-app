@@ -1,5 +1,5 @@
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { editTodo, fetchTodo, toggleEdit } from "../../../redux/todoSlice";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -11,23 +11,29 @@ const TodoShow = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const todo = useSelector((state) => state.todos.todo);
+  const [todo, setTodo] = useState()
   const [isAlert, setAlert] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true); // Set loading state to true before fetching data
+    setIsLoading(true);
     dispatch(fetchTodo(id))
-      .then(() => setIsLoading(false)) // Set loading state to false after data is fetched
+      .unwrap()
+      .then((data) => {
+        console.log("🚀 ~ .then ~ data:", data)
+        setTodo(data)
+      })
       .catch((error) => {
         console.error("Error fetching todo:", error);
-        setIsLoading(false); // Set loading state to false in case of an error
+      }).finally(() => {
+        setIsLoading(false);
       });
   }, [dispatch, id]);
 
   const handleComplete = (todo) => {
-    const updatedTodo = { ...todo, id: todo._id, status: true };
-    dispatch(editTodo(updatedTodo));
+    dispatch(editTodo({...todo, status: true})).then(() => {
+      navigate('/todos');
+    });
   };
 
   const handleEdit = () => {
@@ -36,7 +42,7 @@ const TodoShow = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>; // Render a loading indicator while data is being fetched
+    return <div>Loading...</div>;
   }
 
   return (
