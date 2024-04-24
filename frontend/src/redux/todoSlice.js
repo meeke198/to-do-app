@@ -101,18 +101,6 @@ const todosSlice = createSlice({
       state.error = action.error.message;
     });
     builder.addCase(editTodo.fulfilled, (state, action) => {
-    //  const updatedTodo = action.payload;
-    //  console.log({updatedTodo});
-    //  console.log(state.todos);
-    //  let newTodos = state.todos;
-    //   newTodos.map((todo) => {
-    //     if (todo._id === updatedTodo._id) {
-    //       todo = updatedTodo;
-    //     }
-    //   });
-    //   state.todos = newTodos;
-    //   console.log(state.todos);
-    // });
     const updatedTodo = action.payload;
     state.todos = state.todos.map((todo) =>
       todo._id === updatedTodo.id ? updatedTodo : todo
