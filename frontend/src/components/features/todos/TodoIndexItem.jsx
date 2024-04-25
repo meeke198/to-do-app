@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import "./todo.css"
+import PropTypes from "prop-types";
 const TodoIndexItem = ({todo}) => {
     console.log({todo});
   return (
@@ -25,5 +26,7 @@ const TodoIndexItem = ({todo}) => {
     </div>
   );
 };
-
+TodoIndexItem.propTypes = {
+  todo: PropTypes.object.isRequired,
+};
 export default TodoIndexItem;

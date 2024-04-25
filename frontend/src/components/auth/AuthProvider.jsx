@@ -62,6 +62,7 @@ import { useContext, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "./authSlice.js";
+import PropTypes from "prop-types";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -99,7 +100,9 @@ const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
+AuthProvider.propTypes = {
+  children: PropTypes.object.isRequired,
+};
 export default AuthProvider;
 
 export const useAuth = () => {

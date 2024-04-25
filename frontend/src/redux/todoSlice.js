@@ -1,28 +1,14 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
-const apiUrl = "https://be-todo-h20h.onrender.com/api/tasks";
-const url = proxyUrl + apiUrl;
+const url = "https://be-todo-h20h.onrender.com/api/tasks";
 
 // const URI = "https://be-todo-h20h.onrender.com/api/tasks";
 
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
   const response = await axios.get(url)
-  const data = response.data.data;
-  const newTodos = data.filter(todo => todo.status === false)
-  return newTodos;
+  return response.data.data;
 });
-export const fetchCompletedTodos = createAsyncThunk(
-  "todos/fetchCompletedTodos",
-  async () => {
-    const response = await axios.get(url);
-    const todos = response.data.data;
-    const completedTodo = todos.filter((todo) => todo.status === true);
-    console.log({ response });
-    return completedTodo;
-  }
-);
 
 export const fetchTodo = createAsyncThunk("todos/fetchTodo", async (id) => {
   const response = await axios.get(`${url}/${id}`);
@@ -31,15 +17,11 @@ export const fetchTodo = createAsyncThunk("todos/fetchTodo", async (id) => {
 
 export const createTodo = createAsyncThunk("todos/createTodo", async (newTodo) => {
   const response = await axios.post(url, newTodo);
-  console.log(response.data);
   return response.data;
 });
 
 export const editTodo = createAsyncThunk("todos/editTodo", async (updatedTodo) => {
-  const id = updatedTodo.id;
-  console.log({id});
-  const response = await axios.put(`${url}/${id}`, updatedTodo);
-  console.log({response});
+  const response = await axios.put(`${url}/${updatedTodo._id}`, updatedTodo);
   return response.data;
 });
 
@@ -54,8 +36,6 @@ const todosSlice = createSlice({
     todos: [],
     todo: {},
     loading: false,
-    completedTodos: [],
-    isEdit: false,
     error: null,
   },
   reducers: {
@@ -72,24 +52,12 @@ const todosSlice = createSlice({
       //  console.log(action.payload);
        state.error = action.error.message;
      });
-      // builder.addCase(fetchTodo.pending, (state) => {
-      //   //  console.log(action.payload);
-      //   state.loading = true;
-      // });
      builder.addCase(fetchTodo.fulfilled, (state, action) => {
       //  console.log(action.payload);
        state.todo = action.payload;
      });
      builder.addCase(fetchTodo.rejected, (state, action) => {
       //  console.log(action.payload);
-       state.error = action.error.message;
-     });
-     builder.addCase(fetchCompletedTodos.fulfilled, (state, action) => {
-       console.log(action.payload);
-       state.completedTodos = action.payload;
-     });
-     builder.addCase(fetchCompletedTodos.rejected, (state, action) => {
-       console.log(action.payload);
        state.error = action.error.message;
      });
     builder.addCase(createTodo.fulfilled, (state, action) => {

@@ -4,57 +4,53 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import "./todo.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { useParams, useNavigate} from "react-router-dom";
-import {
-  createTodo,
-  fetchTodo,
-  editTodo,
-  toggleEdit,
-} from "../../../redux/todoSlice";
+import { createTodo, fetchTodo, editTodo } from "../../../redux/todoSlice";
 
 const TodoForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isEdit = useSelector((state) => state.todos.isEdit);
-  const [name, setName] = useState("");
-  const [todo, setTodo] = useState("");
+  const [todo, setTodo] = useState({
+    name: "",
+    status: false,
+  });
   const dispatch = useDispatch();
-  console.log({ isEdit });
   useEffect(() => {
-    if (isEdit) {
-      const fetchData = async () => {
-        const data = await dispatch(fetchTodo(id));
-        setTodo(data.payload);
-        console.log({ data });
-        setName(data.payload.name);
-      };
-      fetchData();
+    if (id) {
+      dispatch(fetchTodo(id))
+        .unwrap()
+        .then((data) => {
+          setTodo(data);
+        })
+        .catch((err) => {
+          console.log("🚀 ~ useEffect ~ err:", err);
+        });
     }
-  }, [id, isEdit]);
-
+  }, []); //why wasn't [id, isEdit], why dispatch? why do => inf loop
+const handleChangeName = (e) => {
+  setTodo({
+    ...todo,
+    name: e.target.value,
+  });
+};
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isEdit) {
-          const updatedPost = { id: todo._id, name, status: todo.status };
-          console.log({ updatedPost });
-          setName("");
-          dispatch(editTodo(updatedPost));
-    } else {
-      const newTodo = {
-        name,
-        status: false,
-      };
-      dispatch(createTodo(newTodo));
-      setName(""); 
-    } 
-    navigate("/todos")
+   if (id) {
+     dispatch(editTodo(todo)).then(() => {
+       navigate("/todos");
+     });
+   } else {
+     dispatch(createTodo(todo)).then(() => {
+       navigate("/todos");
+     });
+   } 
   };
 
   return (
     <div className="form-container">
       <Typography className="typography" component="h1" variant="h5">
-        {isEdit ? "Edit Post" : "Create new post"}
+        {id ? "Edit Post" : "Create new post"}
       </Typography>
       <Box
         className="form-container"
@@ -67,8 +63,8 @@ const TodoForm = () => {
           margin="normal"
           required
           fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={todo?.name || ''}
+          onChange={handleChangeName}
           id="title"
           name="title"
           placeholder="Enter todo here"
@@ -80,7 +76,7 @@ const TodoForm = () => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          {isEdit ? "Edit post" : "Create post"}
+          {id ? "Edit post" : "Create post"}
         </Button>
       </Box>
     </div>
