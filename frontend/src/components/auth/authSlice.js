@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-import axios from "axios";
-// const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
-// const apiUrl = "https://be-todo-h20h.onrender.com/api/tasks";
+import axiosInstance from "axios";
 const url = "http://localhost:5001";
 const initialState = {
   user: null,
@@ -10,40 +8,22 @@ const initialState = {
   loading: false,
   error: null,
 };
-// export const loginAction = async (data) => {
-//   try {
-//     const response = await fetch("your-api-endpoint/auth/login", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },`
-//       body: JSON.stringify(data),
-//     });
-//     const res = await response.json();
-//     if (res.data) {
-//       setUser(res.data.user);
-//       setToken(res.token);
-//       localStorage.setItem("site", res.token);
-
-//     }
-//     throw new Error(res.message);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// };
 export const login = createAsyncThunk("auth/login", async (user) => {
   try {
-    const response = await axios.post(`${url}/login`, user, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      
-    });
-    console.log({response});
-    const res = await response.data;
-    console.log({ res });
-    const token = res.token;
-    localStorage.setItem("token", token.slice(7));
+    const response = await axiosInstance.post(`${url}/login`, user);
+    const res = response.data;
+    localStorage.setItem("token", res.token.slice(7));
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+export const signup = createAsyncThunk("auth/signup", async (user) => {
+  try {
+    const response = await axiosInstance.post(`${url}/signup`, user);
+    const res = response.data;
+    localStorage.setItem("token", res.token.slice(7));
     return res;
   } catch (error) {
     console.error(error);
@@ -54,21 +34,24 @@ export const login = createAsyncThunk("auth/login", async (user) => {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    // loginAction(state, action) {
-    //   state.isEdit = action.payload;
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
-       console.log(action.payload);
+      console.log(action.payload);
       state.user = action.payload;
     });
     builder.addCase(login.rejected, (state, action) => {
-       console.log(action.payload);
+      console.log(action.payload);
       state.error = action.payload;
     });
-
+    builder.addCase(signup.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.user = action.payload;
+    });
+    builder.addCase(signup.rejected, (state, action) => {
+      console.log(action.payload);
+      state.error = action.payload;
+    });
   },
 });
 
