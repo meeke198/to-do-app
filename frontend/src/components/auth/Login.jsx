@@ -12,7 +12,7 @@ const {
   } = useAuth();
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
-    if (input.email !== "" && input.password !== "") {
+    if (input.email !== "" && input.email !== "" && input.password !== "") {
       const res = await logIn(input);
       console.log({res});
     }
