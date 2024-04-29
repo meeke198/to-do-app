@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "./AuthProvider";
-
 import "./auth.css"
-const Login = () => {
+const Signup = () => {
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
 const {
-    logIn, 
+    signUp, 
   } = useAuth();
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
     if (input.email !== "" && input.password !== "") {
-      const res = await logIn(input);
+      const res = await signUp(input);
       console.log({res});
     }
     
@@ -65,4 +64,4 @@ const {
   );
 };
 
-export default Login;
+export default Signup;

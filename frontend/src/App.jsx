@@ -4,6 +4,7 @@ import {TodoRoutes} from "./routes/TodoRoutes";
 import Home from "./components/features/pages/Home";
 import NavBar from "./components/features/navbar/NavBar";
 import Login from "./components/auth/Login";
+import Signup from "./components/auth/Signup";
 import AuthProvider from "./components/auth/AuthProvider";
 import PrivateRoute from "./components/auth/PrivateRoutes";
 import Dashboard from "./components/auth/Dashboard";
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>

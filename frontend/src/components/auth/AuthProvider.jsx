@@ -61,13 +61,14 @@
 import { useContext, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "./authSlice.js";
+import { login, signup } from "./authSlice.js";
 import PropTypes from "prop-types";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isSignup, setIsSignup] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -88,6 +89,22 @@ const AuthProvider = ({ children }) => {
         console.error(err);
       });
   };
+  const signUp = (authUser) => {
+    dispatch(signup(authUser))
+      .then((res) => {
+        console.log(res.payload);
+        if (res.payload) {
+          setAuthUser(res.payload.user);
+          setToken(res.payload.token);
+          localStorage.setItem("token", res.payload.token.slice(7));
+          navigate("/dashboard");
+          return res;
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
    const logOut = () => {
      setAuthUser(null);
      setToken("");
@@ -95,7 +112,9 @@ const AuthProvider = ({ children }) => {
      navigate("/login");
    };
   return (
-    <AuthContext.Provider value={{ token, authUser, isLoggedIn, logIn, logOut }}>
+    <AuthContext.Provider
+      value={{ token, authUser, isLoggedIn, signUp, logIn, logOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
